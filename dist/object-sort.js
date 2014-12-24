@@ -63,7 +63,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var util      = __webpack_require__(/*! ./util */ 1);
 	
 	var Sort = {
-	  util: util,
+	
 	  types: {
 	    order: {
 	      ascending  : 'ascending',
