@@ -52,22 +52,327 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
+/*!**********************!*\
+  !*** ./lib/index.js ***!
+  \**********************/
 /***/ function(module, exports, __webpack_require__) {
 
-	eval("'use strict';\n\nvar invariant = __webpack_require__(2);\nvar util      = __webpack_require__(1);\n\nvar Sort = {\n  types: {\n    order: {\n      ascending  : 'ascending',\n      descending : 'descending'\n    },\n    sort: {}\n  },\n\n  methods: {\n    groups: {},\n    order: {\n      ascending:function(a) { return a; },\n      descending:function(a) { return a.reverse(); }\n    },\n    sort: {}\n  },\n\n  factory:function(list) {\n    return Object.create(Sort, {\n      originalList : util.defaultObjectProp(list),\n      lastValue    : util.defaultObjectProp(list)\n    });\n  },\n\n  configure:function(types) {\n    invariant(\n      util.isObject(types),\n      'object-sort :: `configure` expects a type definition object, type was %s',\n      util.toStr(types)\n    );\n\n    Object.keys(types).map(function(key) {\n      invariant(\n        util.isFunction(types[key]) || util.isString(types[key]),\n        'object-sort :: `configure` expects the value of each type to be a string or function. It was: %s',\n        util.toStr(types[key])\n      );\n\n      if (util.isString(types[key])) {\n        types[key] = Sort._generateValueGetter(types, types[key]);\n      }\n\n      Sort.types.sort[key]     = key;\n      Sort.methods.sort[key]   = Sort._generateSortFn(types[key]);\n      Sort.methods.groups[key] = types[key];\n    }, this);\n  },\n\n  order:function(type) {\n    invariant(\n      util.objectKeysContain(this.types.order, type),\n      'object-sort :: invalid type passed to method `order`. %s',\n      type\n    );\n\n    if (!this.lastValue.length) { return; }\n\n    if (util.isArray(this.lastValue[0])) {\n      this.lastValue.forEach(function(val) {\n        this.methods.order[type](val);\n      }, this);\n    } else {\n      this.methods.order[type](this.lastValue);\n    }\n\n    return this;\n  },\n\n  sort:function(type) {\n    invariant(\n      util.objectKeysContain(this.types.sort, type),\n      'object-sort :: invalid type passed to method `sort`. %s',\n      type\n    );\n\n    if (!this.lastValue.length) { return; }\n\n    if (util.isArray(this.lastValue[0])) {\n      this.lastValue.forEach(function(val) {\n        val.sort(this.methods.sort[type]);\n      }, this);\n    } else {\n      this.lastValue.sort(this.methods.sort[type]);\n    }\n\n    return this;\n  },\n\n  group:function(type) {\n    invariant(\n      util.objectKeysContain(this.types.sort, type),\n      'object-sort :: invalid type passed to method `group`. %s',\n      type\n    );\n\n    if (!this.lastValue.length) { return; }\n\n    this.lastValue = this._partition(this.methods.groups[type]);\n    return this;\n  },\n\n  reset:function() {\n    this.lastValue = this.originalList;\n    return this;\n  },\n\n  getValue:function() {\n    var value = this.lastValue.slice(0);\n    return this.reset() && value;\n  },\n\n  getOriginalValue:function() {\n    return this.originalList;\n  },\n\n  _generateValueGetter:function(object, key) {\n    return function(object) {\n      return object[key];\n    };\n  },\n\n  _generateSortFn:function(getValue) {\n    return function(a, b) {\n      a = util.normalizeValue(getValue(a));\n      b = util.normalizeValue(getValue(b));\n\n      if ( util.isNumeric(a) && util.isNumeric(b) ) { return a - b; }\n\n      return a < b ? -1 : a > b ? 1 : 0;\n    };\n  },\n\n  _partition:function(getValue) {\n    var groups = {};\n    var result = [];\n\n    this.lastValue.map(function(o) {\n      var k = util.normalizeValue(getValue(o));\n      (Object.hasOwnProperty.call(groups, k) ? groups[k] : groups[k] = []).push(o);\n    }, this);\n\n    Object.keys(groups).map(function(key) {\n      result.push(groups[key]);\n    });\n\n    return result;\n  }\n};\n\nmodule.exports = Sort;\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./lib/index.js\n ** module id = 0\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./lib/index.js?");
+	'use strict';
+	
+	var invariant = __webpack_require__(/*! invariant */ 2);
+	var util      = __webpack_require__(/*! ./util */ 1);
+	
+	var Sort = {
+	  util: util,
+	  types: {
+	    order: {
+	      ascending  : 'ascending',
+	      descending : 'descending'
+	    },
+	    sort: {}
+	  },
+	
+	  methods: {
+	    groups: {},
+	    order: {
+	      ascending:function(a) { return a; },
+	      descending:function(a) { return a.reverse(); }
+	    },
+	    sort: {}
+	  },
+	
+	  factory:function(list) {
+	    invariant(
+	      util.isArrayOfObjects(list) || list.every(util.isArrayOfObjects),
+	      'object-sort :: `factory` expects a list (non-empty array of objects) or a pre-grouped list (array of arrays of objects) but was called with %s',
+	      list
+	    );
+	    return Object.create(Sort, {
+	      originalList : util.defaultObjectProp(list),
+	      lastValue    : util.defaultObjectProp(list)
+	    });
+	  },
+	
+	  configure:function(types) {
+	    invariant(
+	      util.isObject(types),
+	      'object-sort :: `configure` expects a type definition object, type was %s',
+	      util.toStr(types)
+	    );
+	
+	    Object.keys(types).map(function(key) {
+	      invariant(
+	        util.isFunction(types[key]) || util.isString(types[key]),
+	        'object-sort :: `configure` expects the value of each type to be a string or function. It was: %s',
+	        util.toStr(types[key])
+	      );
+	
+	      if (util.isString(types[key])) {
+	        types[key] = Sort._generateValueGetter(types, types[key]);
+	      }
+	
+	      Sort.types.sort[key]     = key;
+	      Sort.methods.sort[key]   = Sort._generateSortFn(types[key]);
+	      Sort.methods.groups[key] = types[key];
+	    }, this);
+	  },
+	
+	  order:function(type) {
+	    invariant(
+	      util.objectKeysContain(this.types.order, type),
+	      'object-sort :: invalid type passed to method `order`. %s',
+	      type
+	    );
+	
+	    if (!this.lastValue.length) { return; }
+	
+	    if (util.isArray(this.lastValue[0])) {
+	      this.lastValue.forEach(function(val) {
+	        this.methods.order[type](val);
+	      }, this);
+	    } else {
+	      this.methods.order[type](this.lastValue);
+	    }
+	
+	    return this;
+	  },
+	
+	  sort:function(type) {
+	    invariant(
+	      util.objectKeysContain(this.types.sort, type),
+	      'object-sort :: invalid type passed to method `sort`. %s',
+	      type
+	    );
+	
+	    if (!this.lastValue.length) { return; }
+	
+	    if (util.isArray(this.lastValue[0])) {
+	      this.lastValue.forEach(function(val) {
+	        val.sort(this.methods.sort[type]);
+	      }, this);
+	    } else {
+	      this.lastValue.sort(this.methods.sort[type]);
+	    }
+	
+	    return this;
+	  },
+	
+	  group:function(type) {
+	    invariant(
+	      util.objectKeysContain(this.types.sort, type),
+	      'object-sort :: invalid type passed to method `group`. %s',
+	      type
+	    );
+	
+	    if (!this.lastValue.length) { return; }
+	
+	    this.lastValue = this._partition(this.methods.groups[type]);
+	    return this;
+	  },
+	
+	  reset:function() {
+	    this.lastValue = this.originalList;
+	    return this;
+	  },
+	
+	  getValue:function() {
+	    var value = this.lastValue.slice(0);
+	    return this.reset() && value;
+	  },
+	
+	  getOriginalValue:function() {
+	    return this.originalList;
+	  },
+	
+	  _generateValueGetter:function(object, key) {
+	    return function(object) {
+	      return object[key];
+	    };
+	  },
+	
+	  _generateSortFn:function(getValue) {
+	    return function(a, b) {
+	      a = util.normalizeValue(getValue(a));
+	      b = util.normalizeValue(getValue(b));
+	
+	      if ( util.isNumeric(a) && util.isNumeric(b) ) { return a - b; }
+	
+	      return a < b ? -1 : a > b ? 1 : 0;
+	    };
+	  },
+	
+	  _partition:function(getValue) {
+	    var groups = {};
+	    var result = [];
+	
+	    this.lastValue.map(function(o) {
+	      var k = util.normalizeValue(getValue(o));
+	      (Object.hasOwnProperty.call(groups, k) ? groups[k] : groups[k] = []).push(o);
+	    }, this);
+	
+	    Object.keys(groups).map(function(key) {
+	      result.push(groups[key]);
+	    });
+	
+	    return result;
+	  }
+	};
+	
+	module.exports = Sort;
+
 
 /***/ },
 /* 1 */
+/*!***************************!*\
+  !*** ./lib/util/index.js ***!
+  \***************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	eval("module.exports = {\n  defaultObjectProp:function(value) {\n    return {\n      value: value,\n      writable: true,\n      enumerable: true,\n      configurable: true\n    }\n  },\n\n  normalizeValue:function(val) {\n    if (this.isArray(val)) val.sort();\n    if (this.isArray(val) && val.length === 1) return val[0];\n\n    return val;\n  },\n\n  objectKeysContain:function(object, key) {\n    return Object.keys(object).indexOf(key) != -1;\n  },\n\n  isFunction:function(o) {\n    return (Object.prototype.toString.call(o) === '[object Function]');\n  },\n\n  isObject:function(o) {\n    return (Object.prototype.toString.call(o) === '[object Object]');\n  },\n\n  isNumeric:function(n) {\n    return !isNaN(parseFloat(n)) && isFinite(n);\n  },\n\n  isString:function(s) {\n    return (typeof s == 'string');\n  },\n\n  isArray:function(a) {\n    return (Object.prototype.toString.call(a) === '[object Array]');\n  },\n\n  toStr:function(o) {\n    return Object.prototype.toString.call(o);\n  }\n}\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./lib/util/index.js\n ** module id = 1\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./lib/util/index.js?");
+	'use strict';
+	
+	var Util = {
+	  defaultObjectProp:function(value) {
+	    return {
+	      value: value,
+	      writable: true,
+	      enumerable: true,
+	      configurable: true
+	    }
+	  },
+	
+	  normalizeValue:function(val) {
+	    if (Util.isArray(val)) val.sort();
+	    if (Util.isArray(val) && val.length === 1) return val[0];
+	
+	    return val;
+	  },
+	
+	  objectKeysContain:function(object, key) {
+	    return Object.keys(object).indexOf(key) != -1;
+	  },
+	
+	  // also checks for length > 0
+	  isArrayOfObjects:function(list) {
+	    return Util.isArray(list) && list.length && list.every(function(val) {
+	      return Util.isObject(val);
+	    });
+	  },
+	
+	  isFunction:function(o) {
+	    return (Object.prototype.toString.call(o) === '[object Function]');
+	  },
+	
+	  isObject:function(o) {
+	    return (Object.prototype.toString.call(o) === '[object Object]');
+	  },
+	
+	  isNumeric:function(n) {
+	    return !isNaN(parseFloat(n)) && isFinite(n);
+	  },
+	
+	  isString:function(s) {
+	    return (typeof s == 'string');
+	  },
+	
+	  isArray:function(a) {
+	    return (Object.prototype.toString.call(a) === '[object Array]');
+	  },
+	
+	  toStr:function(o) {
+	    return Object.prototype.toString.call(o);
+	  }
+	}
+	
+	module.exports = Util;
+
 
 /***/ },
 /* 2 */
+/*!**********************************!*\
+  !*** ./~/invariant/invariant.js ***!
+  \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	eval("/**\n * BSD License\n *\n * For Flux software\n *\n * Copyright (c) 2014, Facebook, Inc. All rights reserved.\n *\n * Redistribution and use in source and binary forms, with or without modification,\n * are permitted provided that the following conditions are met:\n *\n *  * Redistributions of source code must retain the above copyright notice, this\n *    list of conditions and the following disclaimer.\n *\n *  * Redistributions in binary form must reproduce the above copyright notice,\n *    this list of conditions and the following disclaimer in the\n *    documentation and/or other materials provided with the distribution.\n *\n *  * Neither the name Facebook nor the names of its contributors may be used to\n *    endorse or promote products derived from this software without specific\n *    prior written permission.\n *\n * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND\n * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED\n * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\n * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR\n * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES\n * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;\n * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON\n * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n *\n */\n\n'use strict';\n\n/**\n * Use invariant() to assert state which your program assumes to be true.\n *\n * Provide sprintf-style format (only %s is supported) and arguments\n * to provide information about what broke and what you were\n * expecting.\n *\n * The invariant message will be stripped in production, but the invariant\n * will remain to ensure logic does not differ in production.\n */\n\nvar invariant = function(condition, format, a, b, c, d, e, f) {\n  // if (process.env.NODE_ENV !== 'production') {\n  //   if (format === undefined) {\n  //     throw new Error('invariant requires an error message argument');\n  //   }\n  // }\n\n  if (!condition) {\n    var error;\n    if (format === undefined) {\n      error = new Error(\n        'Minified exception occurred; use the non-minified dev environment ' +\n        'for the full error message and additional helpful warnings.'\n      );\n    } else {\n      var args = [a, b, c, d, e, f];\n      var argIndex = 0;\n      error = new Error(\n        'Invariant Violation: ' +\n        format.replace(/%s/g, function() { return args[argIndex++]; })\n      );\n    }\n\n    error.framesToPop = 1; // we don't care about invariant's own frame\n    throw error;\n  }\n};\n\nmodule.exports = invariant;\n\n\n/*****************\n ** WEBPACK FOOTER\n ** ./~/invariant/invariant.js\n ** module id = 2\n ** module chunks = 0\n **/\n//# sourceURL=webpack:///./~/invariant/invariant.js?");
+	/**
+	 * BSD License
+	 *
+	 * For Flux software
+	 *
+	 * Copyright (c) 2014, Facebook, Inc. All rights reserved.
+	 *
+	 * Redistribution and use in source and binary forms, with or without modification,
+	 * are permitted provided that the following conditions are met:
+	 *
+	 *  * Redistributions of source code must retain the above copyright notice, this
+	 *    list of conditions and the following disclaimer.
+	 *
+	 *  * Redistributions in binary form must reproduce the above copyright notice,
+	 *    this list of conditions and the following disclaimer in the
+	 *    documentation and/or other materials provided with the distribution.
+	 *
+	 *  * Neither the name Facebook nor the names of its contributors may be used to
+	 *    endorse or promote products derived from this software without specific
+	 *    prior written permission.
+	 *
+	 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+	 * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+	 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+	 * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+	 * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+	 * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	 * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+	 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+	 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+	 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	 *
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+	
+	var invariant = function(condition, format, a, b, c, d, e, f) {
+	  // if (process.env.NODE_ENV !== 'production') {
+	  //   if (format === undefined) {
+	  //     throw new Error('invariant requires an error message argument');
+	  //   }
+	  // }
+	
+	  if (!condition) {
+	    var error;
+	    if (format === undefined) {
+	      error = new Error(
+	        'Minified exception occurred; use the non-minified dev environment ' +
+	        'for the full error message and additional helpful warnings.'
+	      );
+	    } else {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      error = new Error(
+	        'Invariant Violation: ' +
+	        format.replace(/%s/g, function() { return args[argIndex++]; })
+	      );
+	    }
+	
+	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    throw error;
+	  }
+	};
+	
+	module.exports = invariant;
+
 
 /***/ }
 /******/ ])
 });
+
+//# sourceMappingURL=object-sort.js.map
