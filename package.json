@@ -6,14 +6,41 @@
   "directories": {
     "example": "examples"
   },
+  "scripts": {
+    "dev": "npm run compile-watch",
+    "build": "npm run compile && npm run compile-min",
+    "compile": "webpack --config webpack.config.js",
+    "compile-min": "webpack -p --config webpack.config.min.js",
+    "compile-watch": "webpack -dw  --config webpack.config.js",
+    "prepublish": "npm run build",
+    "lint": "jshint ./lib/index.js",
+    "test": "jest"
+  },
+  "jest": {
+    "scriptPreprocessor": "<rootDir>/test/jestPreprocessor.js"
+  },
+  "pre-commit": [
+    "npm run lint",
+    "npm test"
+  ],
+  "pre-push": [
+    "npm run"
+  ],
   "dependencies": {
     "invariant": "^1.0.2"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "devDependencies": {
+    "jest-cli": "^0.2.1",
+    "jshint": "^2.5.11",
+    "jsx-loader": "^0.12.2",
+    "pre-git": "^0.1.1",
+    "react-tools": "^0.12.2",
+    "webpack": "^1.4.14"
   },
-  "repository": "https://github.com/solomonhawk/object-sort.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/solomonhawk/object-sort.git"
+  },
   "keywords": [
     "sort",
     "object"
