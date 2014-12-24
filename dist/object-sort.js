@@ -124,8 +124,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      type
 	    );
 	
-	    if (!this.lastValue.length) { return; }
-	
 	    if (util.isArray(this.lastValue[0])) {
 	      this.lastValue.forEach(function(val) {
 	        this.methods.order[type](val);
@@ -144,8 +142,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      type
 	    );
 	
-	    if (!this.lastValue.length) { return; }
-	
 	    if (util.isArray(this.lastValue[0])) {
 	      this.lastValue.forEach(function(val) {
 	        val.sort(this.methods.sort[type]);
@@ -163,8 +159,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      'object-sort :: invalid type passed to method `group`. %s',
 	      type
 	    );
-	
-	    if (!this.lastValue.length) { return; }
 	
 	    this.lastValue = this._partition(this.methods.groups[type]);
 	    return this;
