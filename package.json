@@ -1,7 +1,7 @@
 {
   "name": "object-sort",
   "version": "0.0.1",
-  "description": "Sort objects by properties with a chainable API.",
+  "description": "A configurable, chainable API for sorting lists of objects.",
   "main": "index.js",
   "directories": {
     "example": "examples"
