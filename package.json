@@ -2,9 +2,10 @@
   "name": "object-sort",
   "version": "0.0.1",
   "description": "A configurable, chainable API for sorting lists of objects.",
-  "main": "index.js",
+  "main": "./dist/object-sort.js",
   "directories": {
-    "example": "examples"
+    "lib": "./lib",
+    "example": "./examples"
   },
   "scripts": {
     "dev": "npm run compile-watch",
@@ -22,9 +23,6 @@
   "pre-commit": [
     "npm run lint",
     "npm test"
-  ],
-  "pre-push": [
-    "npm run"
   ],
   "dependencies": {
     "invariant": "^1.0.2"
