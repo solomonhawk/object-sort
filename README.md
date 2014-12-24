@@ -11,15 +11,29 @@ A configurable, chainable API for sorting lists of objects.
 
 ### configure(types = {})
 
-`types` is an object who's keys represent sort types and who's values are
-functions that, when supplied with the object, will return the value of the
-property of interest for that sort type.
+`types` is an object who's keys represent sort types and who's values are functions that, when supplied with the object, will return the value of the property of interest for that sort type.
 
 e.g.
 
+Given this object structure:
+```json
+{
+  "name": "foo",
+  "role": "bar",
+  "stats": {
+    "hp": 21,
+    "xp": 3913
+  }
+}
+```
+
+You might define sort types as such:
 ```javascript
 var types = {
-  name: function(o) { return o.name }
+  name: function(o) { return o.name; },
+  role: function(o) { return o.role; },
+  hp: function(o) { return o.stats.hp; },
+  xp: function(o) { return o.stats.xp; }
 }
 ```
 
@@ -27,13 +41,14 @@ For properties that exist at the root level of the object, you may choose to sup
 
 ```javascript
 var types = {
-  name: 'name'
+  name: 'name',
+  role: 'role',
+  hp: function(o) { return o.stats.hp; },
+  xp: function(o) { return o.stats.xp; }
 }
 ```
 
-After calling configure, the Sort object's `types` property will be updated and
-should be used as constants for the different methods of applying sorting
-(and ordering/grouping.)
+After calling configure, the Sort object's `types` property will reflect the given rules and should be used as constants for the different methods of applying sorting (and ordering/grouping.)
 
 Access these properties with `Sort.types.sort` and `Sort.types.order`.
 
@@ -64,17 +79,15 @@ Calling the factory function will return a `Sort` object who's `originalList` pr
 
 ### instance.sort(type = CONSTANT)
 
-Sorts the current list according to the given sort type constant.)
+Sorts the current list according to the given sort type constant.
 
-The only argument to `sort` is a constant that represents the key to lookup the
-sort method. This should be passed a reference to one of the constants created
-after calling `Sort.configure`.
+The only argument to `sort` is a constant that represents the key to lookup the sort method. This should be passed a reference to one of the constants created after calling `Sort.configure`.
 
 ===
 
 ### instance.order(type = CONSTANT)
 
-Reorders the current list according to the given order type constant.)
+Reorders the current list according to the given order type constant.
 
 The only argument to `order` is a constant that represents the key to lookup the order method. This should be passed a reference to one of the default order constants `Sort.types.order.ascending` or `Sort.types.order.descending`.
 
@@ -82,7 +95,7 @@ The only argument to `order` is a constant that represents the key to lookup the
 
 ### instance.group(type = CONSTANT)
 
-Groups the current list according to the given sort type constant.)
+Groups the current list according to the given sort type constant.
 
 The only argument to `group` is a constant that represents the key to lookup the value getter method. This should be passed a reference to one of the sort constants.
 
