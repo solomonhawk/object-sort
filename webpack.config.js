@@ -3,8 +3,16 @@ var config = require('./package.json');
 module.exports = {
   entry: './lib/index.js',
 
+  cache: true,
+  bail: false,
+  debug: true,
+  profile: true,
+  devtool: 'eval',
+
   output: {
-    filename: './dist/' + config.name + '.js',
+    pathInfo: true,
+    path: './dist/',
+    filename: config.name + '.js',
     library: config.name,
     libraryTarget: 'umd'
   },
