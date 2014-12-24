@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "npm run compile-watch",
     "build": "npm run compile && npm run compile-min",
-    "compile": "webpack --config webpack.config.js",
+    "compile": "webpack -d --config webpack.config.js",
     "compile-min": "webpack -p --config webpack.config.min.js",
     "compile-watch": "webpack -dw  --config webpack.config.js",
     "prepublish": "npm run build",

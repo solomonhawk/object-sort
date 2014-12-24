@@ -101,6 +101,24 @@ The only argument to `group` is a constant that represents the key to lookup the
 
 ===
 
+### instance.ungroup()
+
+If the current list is grouped, it will flatten the groups.
+
+===
+
+### instance.tap(callback = fn)
+
+Tap let's you get access to the current value without interrupting the chain. `callback` will be called with `this.lastValue` as it's only argument.
+
+===
+
+### instance.reset()
+
+Reset's `this.lastValue` to `this.originalList`.
+
+===
+
 ## Example
 
 ### Sample Data
