@@ -1,0 +1,23 @@
+{
+  "name": "object-sort",
+  "version": "0.0.1",
+  "description": "Sort objects by properties with a chainable API.",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "invariant": "^1.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "https://github.com/solomonhawk/object-sort.git",
+  "keywords": [
+    "sort",
+    "object"
+  ],
+  "author": "Solomon Hawk",
+  "license": "MIT"
+}

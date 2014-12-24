@@ -1,0 +1,59 @@
+{
+  "name": "Ashe's Pokedex",
+  "sort": "byName",
+  "order": "descending",
+  "pokemon": [
+    {
+      "id": 4,
+      "name": "Charmander",
+      "types": "fire",
+      "species": "lizard",
+      "abilities": ["Blaze", "Solar Power"],
+      "stats": {
+        "hp": 39,
+        "attack": 52,
+        "defense": 43,
+        "speed": 65
+      }
+    },
+    {
+      "id": 7,
+      "name": "Squirtle",
+      "types": "water",
+      "species": "turtle",
+      "abilities": ["Torrent", "Rain Dash"],
+      "stats": {
+        "hp": 44,
+        "attack": 48,
+        "defense": 65,
+        "speed": 43
+      }
+    },
+    {
+      "id": 1,
+      "name": "Bulbasaur",
+      "types": ["grass", "poison"],
+      "species": "seed",
+      "abilities": ["Overgrow", "Chlorophyll"],
+      "stats": {
+        "hp": 45,
+        "attack": 49,
+        "defense": 49,
+        "speed": 45
+      }
+    },
+    {
+      "id": 3,
+      "name": "Fooasaur",
+      "types": ["pimp", "baller"],
+      "species": "thug",
+      "abilities": ["Overgrow", "Chlorophyll"],
+      "stats": {
+        "hp": 45,
+        "attack": 99,
+        "defense": 87,
+        "speed": 45
+      }
+    }
+  ]
+}
