@@ -18,7 +18,10 @@
     "test": "jest"
   },
   "jest": {
-    "scriptPreprocessor": "<rootDir>/test/jestPreprocessor.js"
+    "scriptPreprocessor": "<rootDir>/test/jestPreprocessor.js",
+    "globals": {
+      "__DEV__": "true"
+    }
   },
   "pre-commit": [
     "npm run lint",
@@ -44,5 +47,12 @@
     "object"
   ],
   "author": "Solomon Hawk",
+  "contributors": [
+    {
+      "name": "Solomon Hawk",
+      "email": "solomon.hawk@viget.com",
+      "url": "http://viget.com"
+    }
+  ],
   "license": "MIT"
 }
