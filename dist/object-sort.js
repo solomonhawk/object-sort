@@ -107,7 +107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Object.keys(types).map(function(key) {
 	      invariant(
 	        _.isFunction(types[key]) || _.isString(types[key]),
-	        'object-sort :: `configure` expects the value of each type to be a string or function. It was: %s',
+	        'object-sort :: `configure` expects the value of each property in the types object to be a string or function. It was: %s',
 	        _.toStr(types[key])
 	      );
 	
@@ -229,9 +229,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var groups = {};
 	    var result = [];
 	
-	    this.lastValue.map(function(o) {
-	      var k = _.normalizeValue(getValue(o));
-	      (Object.hasOwnProperty.call(groups, k) ? groups[k] : groups[k] = []).push(o);
+	    this.lastValue.map(function(object) {
+	      var group = _.normalizeValue(getValue(object));
+	      (Object.hasOwnProperty.call(groups, group)
+	        ? groups[group]
+	        : groups[group] = []
+	      ).push(object);
 	    }, this);
 	
 	    Object.keys(groups).map(function(key) {
