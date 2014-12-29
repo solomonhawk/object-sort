@@ -62,7 +62,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	__webpack_require__(/*! ./patch */ 1);
 	
 	var invariant = __webpack_require__(/*! invariant */ 3);
-	var util      = __webpack_require__(/*! ./util */ 2);
+	var _         = __webpack_require__(/*! ./util */ 2);
 	
 	var Sort = {
 	
@@ -85,33 +85,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  factory:function(list) {
 	    invariant(
-	      (util.isArray(list) && list.length > 0 && (util.isArrayOfObjects(list) || list.every(util.isArrayOfObjects))),
+	      (_.isArray(list) && list.length > 0 && (_.isArrayOfObjects(list) || list.every(_.isArrayOfObjects))),
 	      'object-sort :: `factory` expects a list (array of objects) or a pre-grouped list (array of arrays of objects) but was called with %s. All arrays are expected to be of non-zero length.',
 	      list
 	    );
 	
 	    return Object.create(Sort, {
-	      originalList : util.defaultObjectProp(list),
-	      lastValue    : util.defaultObjectProp(list),
-	      isGrouped    : util.defaultObjectProp(list.every(util.isArrayOfObjects))
+	      originalList : _.defaultObjectProp(list),
+	      lastValue    : _.defaultObjectProp(list),
+	      isGrouped    : _.defaultObjectProp(list.every(_.isArrayOfObjects))
 	    });
 	  },
 	
 	  configure:function(types) {
 	    invariant(
-	      util.isObject(types),
+	      _.isObject(types),
 	      'object-sort :: `configure` expects a type definition object, type was %s',
-	      util.toStr(types)
+	      _.toStr(types)
 	    );
 	
 	    Object.keys(types).map(function(key) {
 	      invariant(
-	        util.isFunction(types[key]) || util.isString(types[key]),
+	        _.isFunction(types[key]) || _.isString(types[key]),
 	        'object-sort :: `configure` expects the value of each type to be a string or function. It was: %s',
-	        util.toStr(types[key])
+	        _.toStr(types[key])
 	      );
 	
-	      if (util.isString(types[key])) {
+	      if (_.isString(types[key])) {
 	        types[key] = Sort._generateValueGetter(types, types[key]);
 	      }
 	
@@ -123,7 +123,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  order:function(type) {
 	    invariant(
-	      util.objectKeysContain(this.types.order, type),
+	      _.objectKeysContain(this.types.order, type),
 	      'object-sort :: invalid type passed to method `order`. %s',
 	      type
 	    );
@@ -141,7 +141,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  sort:function(type) {
 	    invariant(
-	      util.objectKeysContain(this.types.sort, type),
+	      _.objectKeysContain(this.types.sort, type),
 	      'object-sort :: invalid type passed to method `sort`. %s',
 	      type
 	    );
@@ -159,7 +159,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  group:function(type) {
 	    invariant(
-	      util.objectKeysContain(this.types.sort, type),
+	      _.objectKeysContain(this.types.sort, type),
 	      'object-sort :: invalid type passed to method `group`. %s',
 	      type
 	    );
@@ -177,7 +177,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  ungroup:function() {
 	    if (this.isGrouped) {
 	      this.isGrouped = false;
-	      this.lastValue = util.flatten(this.lastValue);
+	      this.lastValue = _.flatten(this.lastValue);
 	    }
 	
 	    return this;
@@ -190,9 +190,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  tap:function(callback) {
 	    invariant(
-	      util.isFunction(callback),
+	      _.isFunction(callback),
 	      'object-sort :: invalid callback passed to `tap`, expects a function. %s',
-	      util.toStr(callback)
+	      _.toStr(callback)
 	    );
 	
 	    callback(this.lastValue);
@@ -216,10 +216,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  _generateSortFn:function(getValue) {
 	    return function(a, b) {
-	      a = util.normalizeValue(getValue(a));
-	      b = util.normalizeValue(getValue(b));
+	      a = _.normalizeValue(getValue(a));
+	      b = _.normalizeValue(getValue(b));
 	
-	      if ( util.isNumeric(a) && util.isNumeric(b) ) { return a - b; }
+	      if ( _.isNumeric(a) && _.isNumeric(b) ) { return a - b; }
 	
 	      return a < b ? -1 : a > b ? 1 : 0;
 	    };
@@ -230,7 +230,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var result = [];
 	
 	    this.lastValue.map(function(o) {
-	      var k = util.normalizeValue(getValue(o));
+	      var k = _.normalizeValue(getValue(o));
 	      (Object.hasOwnProperty.call(groups, k) ? groups[k] : groups[k] = []).push(o);
 	    }, this);
 	
